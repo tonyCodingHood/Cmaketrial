@@ -90,19 +90,9 @@ if(NOT DEFINED OUTPUT_DIR_2)
     SET(OUTPUT_DIR_2 ${PROJECT_SOURCE_DIR}/bin/)
 endif()
 
-if(DEFINED CURL_INCLUDE_DIR)
-message("USING PROJECT CURL!:" ${CURL_INCLUDE_DIR})
-    file(REMOVE_RECURSE ${THIRDPARTY}/include/curl)
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        file(REMOVE ${THIRDPARTY}/libs/x32d/libcurl.lib)
-        file(REMOVE ${THIRDPARTY}/libs/x32d/libcurld.dll)
-    else()
-        file(REMOVE ${THIRDPARTY}/libs/x32/libcurl.lib)
-        file(REMOVE ${THIRDPARTY}/libs/x32/libcurl.dll)
-    endif()
-else()
-    message("USING 3RDPARTY CURL!")
-endif()
+set(CURL_INCLUDE_DIR ${THIRDPARTY}/include/curl)
+
+
 #find_package(CURL REQUIRED)
 
 set(USE_PREBUILT_3RDPARTY 1) 
@@ -147,6 +137,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     link_directories(${THIRDPARTY}/libs/x32d)
 else()
     link_directories(${THIRDPARTY}/libs/x32)
+    
 endif()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/sdk/contrib/cmake/  EXCLUDE_FROM_ALL)
@@ -162,7 +153,7 @@ add_dependencies(Mega apply_mega_patch)
 add_executable(hello ${THIRDPARTY}/libs/sqlite3.c helloworld.cpp)
 add_dependencies(hello libcurl Mega)
 
-target_link_libraries(hello  ${CRYPTOPP}/Win32/Output/${CMAKE_BUILD_TYPE}/cryptlib.lib   $<TARGET_FILE:Mega> winhttp  cares sodium shlwapi)
+target_link_libraries(hello  ${CRYPTOPP}/Win32/Output/${CMAKE_BUILD_TYPE}/cryptlib.lib libcurl  $<TARGET_FILE:Mega> winhttp  cares sodium shlwapi)
 
 add_definitions(
     -D__STDC_LIMIT_MACROS=1 )
