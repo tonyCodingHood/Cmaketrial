@@ -89,7 +89,7 @@ endif()
 if(NOT DEFINED OUTPUT_DIR_2)
     SET(OUTPUT_DIR_2 ${PROJECT_SOURCE_DIR}/bin/)
 endif()
-
+set(USE_OPENSSL 0)
 add_subdirectory(${PROJECT_SOURCE_DIR}/curl EXCLUDE_FROM_ALL)
 set (CURL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/curl/include)
 
@@ -213,6 +213,7 @@ else()
 endif()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/sdk/contrib/cmake/  EXCLUDE_FROM_ALL)
+set(USE_OPENSSL 0)
 add_custom_target( 
     apply_mega_patch
   COMMENT "Resetting mega"
@@ -223,8 +224,8 @@ add_custom_target(
 add_dependencies(Mega apply_mega_patch)
 
 add_executable(hello ${THIRDPARTY}/libs/sqlite3.c helloworld.cpp)
-add_dependencies(hello libcurl Mega)
-
+add_dependencies(hello Mega)
+add_dependencies(Mega libcurl) 
 target_link_libraries(hello  ${CRYPTOPP}/Win32/Output/${CMAKE_BUILD_TYPE}/cryptlib.lib  ${CURL_LIBRARY}  $<TARGET_FILE:Mega> winhttp  cares sodium shlwapi)
 
 add_definitions(
