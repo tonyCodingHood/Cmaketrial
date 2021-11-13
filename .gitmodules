@@ -1,3 +1,6 @@
 [submodule "sdk"]
 	path = sdk
 	url = https://github.com/meganz/sdk.git
+[submodule "curl"]
+	path = curl
+	url = https://github.com/curl/curl.git
