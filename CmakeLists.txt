@@ -5,11 +5,10 @@ add_definitions(-D__STDC_LIMIT_MACROS=1)
 set (CMAKE_CXX_STANDARD 11)
 #use_cxx17()
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
-set(Boost_USE_STATIC_LIBS ON) 
-set(Boost_USE_MULTITHREADED ON)  
-find_package(Boost COMPONENTS filesystem timer thread
-log locale
-) 
+find_package(Git)
+if(Git_FOUND)
+  message("Git found: ${GIT_EXECUTABLE}")
+endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Debug" FORCE)
   message("XYXYXYXYXYX ${CMAKE_BUILD_TYPE} mode XYXYXYXYX")
@@ -156,14 +155,10 @@ add_custom_target(
   COMMENT "Resetting mega"
   COMMAND ${GIT_EXECUTABLE}   reset --hard
   COMMENT "Patching Mega"
-  COMMAND ${GIT_EXECUTABLE}  apply --reject ../mega_patch.patch
+  COMMAND ${GIT_EXECUTABLE}  apply --reject ${PROJECT_SOURCE_DIR}/mega_patch.patch
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/sdk/)
 add_dependencies(Mega apply_mega_patch)
 
-set_target_properties(hello
-    PROPERTIES
-    CXX_STANDARD 17
-)
 add_executable(hello ${THIRDPARTY}/libs/sqlite3.c helloworld.cpp)
 add_dependencies(hello libcurl Mega)
 
