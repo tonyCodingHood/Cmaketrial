@@ -96,12 +96,15 @@ set (CURL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/curl/include)
 if(DEFINED CURL_INCLUDE_DIR)
 message("USING PROJECT CURL!:" ${CURL_INCLUDE_DIR})
     file(REMOVE_RECURSE ${THIRDPARTY}/include/curl)
+    file(REMOVE_RECURSE ${THIRDPARTY}/include/cryptopp)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         file(REMOVE ${THIRDPARTY}/libs/x32d/libcurl.lib)
         file(REMOVE ${THIRDPARTY}/libs/x32d/libcurld.dll)
+        file(REMOVE ${THIRDPARTY}/libs/x32d/cryptopp.lib)
     else()
         file(REMOVE ${THIRDPARTY}/libs/x32/libcurl.lib)
         file(REMOVE ${THIRDPARTY}/libs/x32/libcurl.dll)
+        file(REMOVE ${THIRDPARTY}/libs/x32/cryptopp.lib)
     endif()
 else()
     message("USING 3RDPARTY CURL!")
@@ -113,7 +116,52 @@ if(NOT CURL_FOUND)
   find_package(CURL REQUIRED) 
 endif()
 
+set(CRYPTOPP  ${PROJECT_SOURCE_DIR}/cryptopp)
+if(STATIC_CRT)
+  set(PATCH_FILE cryptlib.patch)
+else()
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message("Will apply Debug patch")
+      set(PATCH_FILE debug_cryptlib.patch)
+    else()
+    message("Will apply Release patch")
+     set(PATCH_FILE cryptlib.patch)
+    endif()
+endif()
 
+if(WIN32)
+if(NOT CMAKE_CL_64)
+      add_custom_target( 
+        cryptopp_build
+      COMMENT "Resetting cryptlib.vcxporj"
+      COMMAND ${GIT_EXECUTABLE}   reset --hard
+      COMMENT "Patching cryptlib.vcxporj"
+      COMMAND ${GIT_EXECUTABLE}  apply --reject ../patches/${PATCH_FILE}
+      COMMENT "building cryptopp ${CMAKE_BUILD_TYPE}:x86"
+      COMMAND msbuild cryptlib.vcxproj /p:Configuration=${CMAKE_BUILD_TYPE}  /m
+      WORKING_DIRECTORY ${CRYPTOPP} 
+      )
+  else()
+      add_custom_target(
+        cryptopp_build
+      COMMENT "Resetting cryptlib.vcxporj"
+      COMMAND ${GIT_EXECUTABLE}   reset --hard
+      COMMENT "Patching cryptlib.vcxporj"
+      COMMAND ${GIT_EXECUTABLE}  apply --reject ../patches/${PATCH_FILE}
+      COMMENT "building cryptopp ${CMAKE_BUILD_TYPE}:x64"
+      COMMAND msbuild cryptlib.vcxproj /p:Configuration=${CMAKE_BUILD_TYPE}  /m /p:Platform=x64
+      WORKING_DIRECTORY ${CRYPTOPP} 
+      )
+  endif()
+else()
+  add_custom_target(
+    cryptopp_build
+  COMMENT "making cryptopp project [static]"
+  COMMAND make static 
+  COMMENT "installing to ${CRYPTOPP}/install"
+  COMMAND make install PREFIX=${CRYPTOPP}/install
+  WORKING_DIRECTORY ${CRYPTOPP})
+endif()
 #find_package(CURL REQUIRED)
 
 set(USE_PREBUILT_3RDPARTY 1) 
@@ -138,6 +186,7 @@ set(ZLIB_LIBRARY_RELEASE ${PROJECT_SOURCE_DIR}/3rdparty/libs/x32/zlibstatic.lib)
 set(Mega3rdPartyDir  ${PROJECT_SOURCE_DIR}/3rdparty)
 set(MegaDir  ${PROJECT_SOURCE_DIR}/sdk)
 include_directories(
+    ${PROJECT_SOURCE_DIR}/
 ${PROJECT_SOURCE_DIR}/sdk/
 ${PROJECT_SOURCE_DIR}/sdk/include/
 ${PROJECT_SOURCE_DIR}/sdk/include/mega/wincurl 
@@ -149,7 +198,7 @@ ${THIRDPARTY}/include/zlib
 ${THIRDPARTY}/include 
 ${THIRDPARTY}/include/libuv 
 ${THIRDPARTY}/include/mega/wincurl
-${THIRDPARTY}/include/cryptopp
+${CRYPTOPP}/
 ${THIRDPARTY}/include/cares
 ${THIRDPARTY}/include/libsodium
 ${PROJECT_SOURCE_DIR}/sdk/examples/win32
@@ -158,6 +207,7 @@ ${PROJECT_SOURCE_DIR}/sdk/examples/win32
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     link_directories(${THIRDPARTY}/libs/x32d)
 else()
+    link_directories(${THIRDPARTY}/libs/x32)
     link_directories(${THIRDPARTY}/libs/x32)
     
 endif()
