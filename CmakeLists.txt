@@ -226,12 +226,18 @@ add_dependencies(Mega apply_mega_patch)
 add_executable(hello ${THIRDPARTY}/libs/sqlite3.c helloworld.cpp)
 add_dependencies(hello Mega)
 add_dependencies(Mega libcurl) 
-target_link_libraries(hello  ${CRYPTOPP}/Win32/Output/${CMAKE_BUILD_TYPE}/cryptlib.lib  ${CURL_LIBRARY}  $<TARGET_FILE:Mega> winhttp  cares sodium shlwapi)
+add_dependencies(hello cryptopp_build) 
+if(CMAKE_CL_64)
+    set(PLATFORM x64)
+else()
+    set(PLATFORM Win32)
+endif()
+target_link_libraries(hello  ${CRYPTOPP}/${PLATFORM}/Output/${CMAKE_BUILD_TYPE}/cryptlib.lib  ${CURL_LIBRARY}  $<TARGET_FILE:Mega> winhttp  cares sodium shlwapi)
 
 add_definitions(
     -D__STDC_LIMIT_MACROS=1 )
 
-
+#[[
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")   
 
@@ -265,6 +271,7 @@ else()
         add_custom_command(TARGET hello  POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/libeay32.dll $<TARGET_FILE_DIR:hello >)
 endif()
+]]
  
 
 
