@@ -1,0 +1,23 @@
+diff --git a/cryptlib.vcxproj b/cryptlib.vcxproj
+index 29e722f7..c4057b5c 100644
+--- a/cryptlib.vcxproj
++++ b/cryptlib.vcxproj
+@@ -109,7 +109,7 @@
+       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
++      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+     </ClCompile>
+     <ResourceCompile>
+       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -126,7 +126,7 @@
+       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+       <StringPooling>true</StringPooling>
+-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
++      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+     </ClCompile>
+     <ResourceCompile>
+       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
