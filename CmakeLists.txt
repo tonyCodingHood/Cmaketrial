@@ -1,3 +1,207 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(hello)
-add_executable(hello helloworld.cpp)
+
+add_definitions(-D__STDC_LIMIT_MACROS=1)
+set (CMAKE_CXX_STANDARD 11)
+#use_cxx17()
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ")
+find_package(Git)
+if(Git_FOUND)
+  message("Git found: ${GIT_EXECUTABLE}")
+endif()
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+set(CMAKE_BUILD_TYPE Debug CACHE STRING "Debug" FORCE)
+  message("XYXYXYXYXYX ${CMAKE_BUILD_TYPE} mode XYXYXYXYX")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Release" FORCE)
+  message("XYXYXYXYXYX ${CMAKE_BUILD_TYPE} mode XYXYXYXYX")
+else()
+     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Debug" FORCE)
+     message("XYXYXYXYXYX ${CMAKE_BUILD_TYPE} mode XYXYXYXYX")
+endif()
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(build_type "_d")
+    set(build_type2 "d")
+else()
+    set(build_type "")
+    set(build_type2 "")
+endif()
+if (WIN32)
+    if(EXISTS "C:/Program Files (x86)/7-Zip/7z.exe")
+        SET (7ZIP_EXECUTABLE "C:/Program Files (x86)/7-Zip/7z.exe")
+    elseif(EXISTS "C:/Program Files/7-Zip/7z.exe")
+        SET (7ZIP_EXECUTABLE "C:/Program Files/7-Zip/7z.exe")
+    endif()
+else()
+    SET (7ZIP_EXECUTABLE "7z")
+endif()
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/3rdparty")
+    if(EXISTS "${PROJECT_SOURCE_DIR}/3rdparty.zip")
+        if (WIN32)
+                message("Extracting 3rdparty.zip")
+                execute_process(
+                    COMMAND ${7ZIP_EXECUTABLE} x -y -r 3rdparty.zip
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    )
+        else()
+                message("Extracting ${PROJECT_SOURCE_DIR}/3rdparty.zip")
+                    execute_process(
+                        COMMAND ${7ZIP_EXECUTABLE} x -y -r 3rdparty.zip
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    )
+        endif()
+    else()
+        message("Could not find:${PROJECT_SOURCE_DIR}/3rdparty.zip Downloading")
+        file(DOWNLOAD "https://www.dropbox.com/s/8w4lw09kfuajbso/3rdparty.zip?dl=1" ${PROJECT_SOURCE_DIR}/3rdparty.zip  SHOW_PROGRESS STATUS status)
+        if(NOT status EQUAL 0)
+            message("Download failed!")
+            file(REMOVE  ${PROJECT_SOURCE_DIR}/3rdparty.zip)
+        endif()
+        if (WIN32)
+                message("Extracting ${PROJECT_SOURCE_DIR}/3rdparty.zip")
+                execute_process(
+                    COMMAND ${7ZIP_EXECUTABLE} x -y -r ${PROJECT_SOURCE_DIR}/3rdparty.zip
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    )
+        else()
+                message("Extracting ${PROJECT_SOURCE_DIR}/3rdparty.zip")
+                    execute_process(
+                        COMMAND ${7ZIP_EXECUTABLE} x -y -r ${PROJECT_SOURCE_DIR}/3rdparty.zip
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    )
+        endif()
+    endif()
+else()
+    message("3RD PARTY DEPENDANCIES FOUND")
+
+endif()
+#file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/${PROJECT_SOURCE_DIR}/src/*.cpp )
+if(NOT DEFINED THIRDPARTY)
+    message("THRIDPARTY NOT DEFINED!")
+    message("Using default ${PROJECT_SOURCE_DIR}/3rdparty")
+    SET(THIRDPARTY ${PROJECT_SOURCE_DIR}/3rdparty)
+else()
+    message("THRIDPARTY DIR HAS BEEN SET! ${THIRDPARTY}")
+endif()
+if(NOT DEFINED OUTPUT_DIR)
+    SET(OUTPUT_DIR ${PROJECT_SOURCE_DIR}/bin/)
+endif()
+if(NOT DEFINED OUTPUT_DIR_2)
+    SET(OUTPUT_DIR_2 ${PROJECT_SOURCE_DIR}/bin/)
+endif()
+
+if(DEFINED CURL_INCLUDE_DIR)
+message("USING PROJECT CURL!:" ${CURL_INCLUDE_DIR})
+    file(REMOVE_RECURSE ${THIRDPARTY}/include/curl)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        file(REMOVE ${THIRDPARTY}/libs/x32d/libcurl.lib)
+        file(REMOVE ${THIRDPARTY}/libs/x32d/libcurld.dll)
+    else()
+        file(REMOVE ${THIRDPARTY}/libs/x32/libcurl.lib)
+        file(REMOVE ${THIRDPARTY}/libs/x32/libcurl.dll)
+    endif()
+else()
+    message("USING 3RDPARTY CURL!")
+endif()
+#find_package(CURL REQUIRED)
+
+set(USE_PREBUILT_3RDPARTY 1) 
+set(USE_MEDIAINFO 0)
+set(USE_SODIUM 1)
+set(HAVE_FFMPEG 0)
+set(USE_QT 0)
+set(USE_SQLITE 1)
+set(USE_OPENSSL 0)
+set(USE_THIRDPARTY_FROM_VCPKG 0)
+set(USE_CRYPTOPP 1)
+set(USE_CURL 1)
+set (USE_WEBRTC 0 )
+set(ENABLE_LOG_PERFORMANCE 1)
+set(HAVE_FFMPEG 0)
+set(USE_FREEIMAGE 0)
+
+set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/include)
+set(ZLIB_LIBRARY_DEBUG ${PROJECT_SOURCE_DIR}/3rdparty/libs/x32d/zlibstatic.lib) 
+set(ZLIB_LIBRARY_RELEASE ${PROJECT_SOURCE_DIR}/3rdparty/libs/x32/zlibstatic.lib)
+set(Mega3rdPartyDir  ${PROJECT_SOURCE_DIR}/3rdparty)
+set(MegaDir  ${PROJECT_SOURCE_DIR}/sdk)
+include_directories(
+${PROJECT_SOURCE_DIR}/sdk/
+${PROJECT_SOURCE_DIR}/sdk/include/
+${PROJECT_SOURCE_DIR}/sdk/include/mega/wincurl 
+${CURL_INCLUDE_DIR}
+${PROJECT_SOURCE_DIR}/third_party/utf8proc 
+${THIRDPARTY}/third_party/ccronexpr 
+${THIRDPARTY}/third_party/utf8proc
+${THIRDPARTY}/include/zlib 
+${THIRDPARTY}/include 
+${THIRDPARTY}/include/libuv 
+${THIRDPARTY}/include/mega/wincurl
+${THIRDPARTY}/include/cryptopp
+${THIRDPARTY}/include/cares
+${THIRDPARTY}/include/libsodium
+${PROJECT_SOURCE_DIR}/sdk/examples/win32
+)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    link_directories(${THIRDPARTY}/libs/x32d)
+else()
+    link_directories(${THIRDPARTY}/libs/x32)
+endif()
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/sdk/contrib/cmake/  EXCLUDE_FROM_ALL)
+add_custom_target( 
+    apply_mega_patch
+  COMMENT "Resetting mega"
+  COMMAND ${GIT_EXECUTABLE}   reset --hard
+  COMMENT "Patching Mega"
+  COMMAND ${GIT_EXECUTABLE}  apply --reject ${PROJECT_SOURCE_DIR}/mega_patch.patch
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/sdk/)
+add_dependencies(Mega apply_mega_patch)
+
+add_executable(hello ${THIRDPARTY}/libs/sqlite3.c helloworld.cpp)
+add_dependencies(hello libcurl Mega)
+
+target_link_libraries(hello  ${CRYPTOPP}/Win32/Output/${CMAKE_BUILD_TYPE}/cryptlib.lib   $<TARGET_FILE:Mega> winhttp  cares sodium shlwapi)
+
+add_definitions(
+    -D__STDC_LIMIT_MACROS=1 )
+
+
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")   
+
+    add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32d/FreeImaged.dll $<TARGET_FILE_DIR:hello > )
+        add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${SSL_EAY_RELEASE}  $<TARGET_FILE_DIR:hello > )  
+        add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${LIB_EAY_RELEASE} $<TARGET_FILE_DIR:hello > )     
+    add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32d/caresd.dll $<TARGET_FILE_DIR:hello > )
+    add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32d/libsodium.dll $<TARGET_FILE_DIR:hello >)
+        add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32d/ssleay32.dll $<TARGET_FILE_DIR:hello >)
+        add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32d/libeay32.dll $<TARGET_FILE_DIR:hello >)
+else()
+    add_custom_command(TARGET hello  POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32/FreeImage.dll $<TARGET_FILE_DIR:hello > )
+    add_custom_command(TARGET hello  POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${SSL_EAY_RELEASE}  $<TARGET_FILE_DIR:hello > )  
+    add_custom_command(TARGET hello  POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${LIB_EAY_RELEASE} $<TARGET_FILE_DIR:hello > ) 
+    add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy  ${THIRDPARTY}/libs/x32/cares.dll $<TARGET_FILE_DIR:hello > )
+    add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/libsodium.dll $<TARGET_FILE_DIR:hello >)
+        add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/ssleay32.dll $<TARGET_FILE_DIR:hello >)
+        add_custom_command(TARGET hello  POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/libeay32.dll $<TARGET_FILE_DIR:hello >)
+endif()
+ 
+
+
+
