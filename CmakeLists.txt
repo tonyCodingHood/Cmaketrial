@@ -237,42 +237,25 @@ target_link_libraries(hello  ${CRYPTOPP}/${PLATFORM}/Output/${CMAKE_BUILD_TYPE}/
 add_definitions(
     -D__STDC_LIMIT_MACROS=1 )
 
-#[[
+
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")   
 
     add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32d/FreeImaged.dll $<TARGET_FILE_DIR:hello > )
-        add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${SSL_EAY_RELEASE}  $<TARGET_FILE_DIR:hello > )  
-        add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${LIB_EAY_RELEASE} $<TARGET_FILE_DIR:hello > )     
+        COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32d/FreeImaged.dll $<TARGET_FILE_DIR:hello> )
     add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32d/caresd.dll $<TARGET_FILE_DIR:hello > )
+        COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32d/caresd.dll $<TARGET_FILE_DIR:hello> )
     add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32d/libsodium.dll $<TARGET_FILE_DIR:hello >)
-        add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32d/ssleay32.dll $<TARGET_FILE_DIR:hello >)
-        add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32d/libeay32.dll $<TARGET_FILE_DIR:hello >)
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32d/libsodium.dll $<TARGET_FILE_DIR:hello>)
 else()
     add_custom_command(TARGET hello  POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32/FreeImage.dll $<TARGET_FILE_DIR:hello > )
+    COMMAND ${CMAKE_COMMAND} -E copy ${THIRDPARTY}/libs/x32/FreeImage.dll $<TARGET_FILE_DIR:hello> )
     add_custom_command(TARGET hello  POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${SSL_EAY_RELEASE}  $<TARGET_FILE_DIR:hello > )  
+        COMMAND ${CMAKE_COMMAND} -E copy  ${THIRDPARTY}/libs/x32/cares.dll $<TARGET_FILE_DIR:hello> )
     add_custom_command(TARGET hello  POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${LIB_EAY_RELEASE} $<TARGET_FILE_DIR:hello > ) 
-    add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy  ${THIRDPARTY}/libs/x32/cares.dll $<TARGET_FILE_DIR:hello > )
-    add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/libsodium.dll $<TARGET_FILE_DIR:hello >)
-        add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/ssleay32.dll $<TARGET_FILE_DIR:hello >)
-        add_custom_command(TARGET hello  POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/libeay32.dll $<TARGET_FILE_DIR:hello >)
+        COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/libsodium.dll $<TARGET_FILE_DIR:hello>)
 endif()
-]]
- 
+
 
 
 

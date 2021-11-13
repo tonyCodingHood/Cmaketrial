@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <megaapi.h>
 int main(int argc, char *argv[]) {
   std::string data;
 
