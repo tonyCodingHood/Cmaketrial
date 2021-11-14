@@ -22,9 +22,11 @@ endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(build_type "_d")
     set(build_type2 "d")
+    set(build_type3 "-d")
 else()
     set(build_type "")
     set(build_type2 "")
+    set(build_type3 "")
 endif()
 if (WIN32)
     if(EXISTS "C:/Program Files (x86)/7-Zip/7z.exe")
@@ -255,6 +257,8 @@ else()
     add_custom_command(TARGET hello  POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy     ${THIRDPARTY}/libs/x32/libsodium.dll $<TARGET_FILE_DIR:hello>)
 endif()
+add_custom_command(TARGET hello  POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E copy    $<TARGET_FILE_DIR:libcurl>/libcurl${build_type3}.dll $<TARGET_FILE_DIR:hello>)
 
 
 
