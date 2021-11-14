@@ -1,0 +1,57 @@
+name: CMake
+
+on:
+  push:
+    branches:
+    - '**'
+    tags-ignore:
+      - '**'
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+jobs:
+  Windows:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    strategy:
+      matrix:
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Create Build Environment
+        # Some projects don't allow in-source building, so create a separate build directory
+        # We'll use this as our working directory for all subsequent commands
+        run: cmake -E make_directory build
+
+      - name: Configure CMake
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: cmd
+        working-directory: /build
+        # Note the current convention is to use the -S and -B options here to specify source
+        # and build directories, but this is only available with CMake 3.13 and higher.
+        # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+        run:
+          cmake  -A Win32 ../
+          -DENABLE_IPV6=0 
+          -DUSE_OPENSSL=0 
+          -DCMAKE_USE_SCHANNEL=1
+        env:
+          #BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+          #CPACK_WIX_UPGRADE_GUID_NEON_SERVICE: ${{ secrets.CPACK_WIX_UPGRADE_GUID_NEON_SERVICE }}
+          OPENSSL_ROOT_DIR: D:\programming\openssl
+            #QTDIR : E:\programming\qt-everywhere-opensource-src-4.8.7
+            #QT4_DIR : E:\programming\qt-everywhere-opensource-src-4.8.7
+            #QT_BIN : E:\programming\qt-everywhere-opensource-src-4.8.7\bin
+
+      - name: Build
+        shell: bash
+        #working-directory: d:/programming/bak/neon_service/build
+        # Execute the build.  You can specify a specific target with "--target <NAME>"
+        run: cmake --build . 
+
