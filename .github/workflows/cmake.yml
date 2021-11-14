@@ -25,7 +25,8 @@ jobs:
     steps:
       - name: Checkout repository
         run: |
-          pwd
+          cd ../
+          dir
           git submodule update --init --recursive
         working-directory: ${{ github.workspace }}
 
