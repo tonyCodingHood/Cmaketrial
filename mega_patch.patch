@@ -1,0 +1,26 @@
+diff --git a/contrib/cmake/CMakeLists.txt b/contrib/cmake/CMakeLists.txt
+index afcb5a9db..06a375ec2 100644
+--- a/contrib/cmake/CMakeLists.txt
++++ b/contrib/cmake/CMakeLists.txt
+@@ -33,9 +33,9 @@ endif()
+ set (USE_ASIO 1 CACHE STRING "Only needed For tcprelay test tool")
+ set (USE_CURL 1 CACHE STRING "Always needed (turning it off would mean using WinHTTP instead but that has not been maintained for a while)")
+ set (USE_SQLITE 1 CACHE STRING "Needed unless intending a cache-less app")
+-set (USE_MEDIAINFO 1 CACHE STRING "Used to determine media properties and set those as node attributes")
+-set (USE_FREEIMAGE 1 CACHE STRING "Used to create previews/thumbnails for photos/pictures")
+-set (ENABLE_SYNC 1 CACHE STRING "Turns on sync functionality")
++set (USE_MEDIAINFO 0 CACHE STRING "Used to determine media properties and set those as node attributes")
++set (USE_FREEIMAGE 0 CACHE STRING "Used to create previews/thumbnails for photos/pictures")
++set (ENABLE_SYNC 0 CACHE STRING "Turns on sync functionality")
+ set (ENABLE_CHAT 0 CACHE STRING "Turns on chat management functionality")
+ set (ENABLE_LOG_PERFORMANCE 0 CACHE STRING "Faster log message generation")
+ set (USE_ROTATIVEPERFORMANCELOGGER 0 CACHE STRING "Internal logger, not just callbacks")
+@@ -248,7 +248,7 @@ if (WIN32)
+     endif()
+ 
+     # warnings as errors, just for windows builds, as warnings keep creeping in.  Best if we address them once in the original MRs.
+-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /WX" )
++    # set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /WX" )
+ 
+     # accurate __cplusplus macro for vc++, selecting c++17 here for windows builds though the MEGA SDK library must build for older c++ standards also
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /std:c++17")
